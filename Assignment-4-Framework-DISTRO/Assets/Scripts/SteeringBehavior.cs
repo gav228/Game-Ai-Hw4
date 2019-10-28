@@ -47,6 +47,19 @@ public class SteeringBehavior : MonoBehaviour {
         wanderOrientation = agent.orientation;
     }
 
+    public float mapToRange(float rotation)
+    {
+        while (rotation > Mathf.PI)
+        {
+            rotation -= 2 * Mathf.PI;
+        }
+        while (rotation < -Mathf.PI)
+        {
+            rotation += 2 * Mathf.PI;
+        }
+        return rotation;
+    }
+
     public Vector3 Seek() {
         return new Vector3(0f, 0f, 0f);
     }
@@ -67,6 +80,49 @@ public class SteeringBehavior : MonoBehaviour {
         return 0f;
     }
 
+    // Face places
+    public float Face_Where_Im_Going(Vector3 linear)
+    {
+        Vector3 direction = linear;
+
+        // Check for a zero direction, and make no change if so
+        if (direction.magnitude == 0)
+        {
+            return 0;
+        }
+
+        // Get the naive direction to the target
+        float rotation = Mathf.Atan2(direction.x, direction.z) - agent.orientation;
+
+        // Map the result to the 
+        rotation = mapToRange(rotation);
+        float rotationSize = Mathf.Abs(rotation);
+
+        // Check if we are there, return no steering
+        if (rotationSize < targetRadiusA)
+        {
+            agent.rotation = 0;
+        }
+
+        float targetRotation = maxRotation;
+
+        // The final target rotation 
+        targetRotation *= rotation / rotationSize;
+
+        // Acceleration tries to get to the target rotation
+        float angular = targetRotation - agent.rotation;
+        angular /= timeToTarget;
+
+        // Check if the acceleration is too great
+        float angularAcceleration = Mathf.Abs(angular);
+        if (angularAcceleration > maxAngularAcceleration)
+        {
+            angular /= angularAcceleration;
+            angular *= maxAngularAcceleration;
+        }
+
+        return angular;
+    }
 
     // ETC.
 

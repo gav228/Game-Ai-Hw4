@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// MapStateManager is the place to keep a succession of events or "states" when building 
@@ -45,6 +46,7 @@ public class FieldMapManager : MonoBehaviour {
 
     private int currentPhase = 0;           // This stores where in the "phases" the game is.
     private int previousPhase = 0;          // The "phases" we were just in
+    private bool started;
 
     //public int Phase => currentPhase;
 
@@ -56,16 +58,18 @@ public class FieldMapManager : MonoBehaviour {
     // spawnedNPCs list. You can always add/remove NPCs later on.
 
     void Start() {
-        narrator.text = "This is the place to mention major things going on during the demo, the \"narration.\"";
+        narrator.text = "This is part 1, press S to start, press S to restart";
 
         trees = new List<GameObject>();
         SpawnTrees(TreeCount);
 
         spawnedNPCs = new List<GameObject>();
         spawnedNPCs.Add(SpawnItem(spawner1, HunterPrefab, null, SpawnText1, 4));
+
+        started = false;
+
+        Time.timeScale = 0;
         
-        Invoke("SpawnWolf", 12);
-        Invoke("Meeting1", 30);
     }
 
     /// <summary>
@@ -75,6 +79,19 @@ public class FieldMapManager : MonoBehaviour {
     /// </summary>
     private void Update()
     {
+        if (Input.GetKeyDown("s") && started == false){
+            started = true;
+            Time.timeScale = 1;
+        } else
+        {
+            if (Input.GetKeyDown("s") && started == true)
+            {
+                // Add restart logic
+                SceneManager.LoadScene("Field");
+            }
+        }
+
+
         int num;
 
         string inputstring = Input.inputString;
@@ -202,6 +219,7 @@ public class FieldMapManager : MonoBehaviour {
                     break;
             }
     }
+
 
 
     private void EnterMapStateZero()

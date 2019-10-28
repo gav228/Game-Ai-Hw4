@@ -40,6 +40,9 @@ public class NPCController : MonoBehaviour {
     /// </summary>
     void FixedUpdate() {
         switch (phase) {
+            case 0:
+                //angular = ai.Face_Where_Im_Going(position);
+                break;
             case 1:
                 if (label) {
                     // replace "First algorithm" with the name of the actual algorithm you're demoing
