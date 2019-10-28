@@ -43,10 +43,16 @@ public class FieldMapManager : MonoBehaviour {
  
     private List<GameObject> spawnedNPCs;   // When you need to iterate over a number of agents.
     private List<GameObject> trees;
+    private List<GameObject> Flock;
+    private Vector3 velocity;
+    public Vector3 position;
 
     private int currentPhase = 0;           // This stores where in the "phases" the game is.
     private int previousPhase = 0;          // The "phases" we were just in
     private bool started;
+    private GameObject red;
+
+   
 
     //public int Phase => currentPhase;
 
@@ -59,16 +65,29 @@ public class FieldMapManager : MonoBehaviour {
 
     void Start() {
         narrator.text = "This is part 1, press S to start, press S to restart";
-
+        
+        
+        Flock = new List<GameObject>();
         trees = new List<GameObject>();
         SpawnTrees(TreeCount);
 
         spawnedNPCs = new List<GameObject>();
-        spawnedNPCs.Add(SpawnItem(spawner1, HunterPrefab, null, SpawnText1, 4));
+        for (int i = 0; i < 20; i++)
+        {
+            GameObject hunter = SpawnItem(spawner1, HunterPrefab, null, SpawnText1, 4);
+            spawnedNPCs.Add(hunter);
+            Flock.Add(hunter);
+        }
+
+        GameObject red = GameObject.Find("Red");
+        Flock.Add(red);
+        
 
         started = false;
 
         Time.timeScale = 0;
+
+        
         
     }
 
@@ -79,9 +98,57 @@ public class FieldMapManager : MonoBehaviour {
     /// </summary>
     private void Update()
     {
+        // Get average position
+
+        float sum_x = 0;
+        float sum_y = 0;
+        float sum_z = 0;
+
+        // Sum values
+        for (int i = 0; i < Flock.Count; i++)
+        {
+            sum_x += Flock[i].gameObject.transform.position.x;
+            sum_y += Flock[i].gameObject.transform.position.y;
+            sum_z += Flock[i].gameObject.transform.position.z;
+        }
+
+        // Divide
+        sum_x = sum_x / Flock.Count;
+        sum_y = sum_y / Flock.Count;
+        sum_z = sum_z / Flock.Count;
+
+        // Set average position
+        position = new Vector3(sum_x, sum_y, sum_z);
+
+        // Get average velocity
+
+        sum_x = 0;
+        sum_y = 0;
+        sum_z = 0;
+
+        // Sum values
+        for (int i = 0; i < Flock.Count; i++)
+        {
+            sum_x += Flock[i].gameObject.GetComponent<Rigidbody>().velocity.x;
+            sum_y += Flock[i].gameObject.GetComponent<Rigidbody>().velocity.y;
+            sum_z += Flock[i].gameObject.GetComponent<Rigidbody>().velocity.z;
+        }
+
+        // Divide
+        sum_x = sum_x / Flock.Count;
+        sum_y = sum_y / Flock.Count;
+        sum_z = sum_z / Flock.Count;
+
+        // Set average position
+        velocity = new Vector3(sum_x, sum_y, sum_z);
+
+        Debug.Log(position);
+        Debug.Log(velocity);
+
         if (Input.GetKeyDown("s") && started == false){
             started = true;
             Time.timeScale = 1;
+            
         } else
         {
             if (Input.GetKeyDown("s") && started == true)
@@ -97,7 +164,7 @@ public class FieldMapManager : MonoBehaviour {
         string inputstring = Input.inputString;
         if (inputstring.Length > 0)
         {
-            Debug.Log(inputstring);
+            
 
             if (inputstring[0] == 'R')
             {
@@ -220,7 +287,7 @@ public class FieldMapManager : MonoBehaviour {
             }
     }
 
-
+    
 
     private void EnterMapStateZero()
     {

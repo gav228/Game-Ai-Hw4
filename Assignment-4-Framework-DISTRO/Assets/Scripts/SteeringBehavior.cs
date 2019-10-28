@@ -80,6 +80,21 @@ public class SteeringBehavior : MonoBehaviour {
         return 0f;
     }
 
+    public Vector3 Separation()
+    {
+        return new Vector3(0f, 0f, 0f);
+    }
+
+    public Vector3 Cohesion()
+    {
+        return new Vector3(0f, 0f, 0f);
+    }
+
+    public Vector3 VelocityMatch()
+    {
+        return new Vector3(0f, 0f, 0f);
+    }
+
     // Face places
     public float Face_Where_Im_Going(Vector3 linear)
     {

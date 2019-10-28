@@ -37,9 +37,9 @@ public class PlayerController : MonoBehaviour {
         // You could instead map this to the mouse if you like.
 
         Vector3 movement = new Vector3(moveHorizontal, 0f, moveVertical);
-        if (moveHorizontal > 0.1 || moveHorizontal < -0.1 || moveVertical > 0.1 || moveVertical < 0.1)
+        if (movement != Vector3.zero)
         {
-             transform.rotation = Quaternion.LookRotation(movement);
+             transform.rotation = Quaternion.LookRotation(movement);  
         }
         
         this.transform.position = new Vector3(transform.position.x + speed * moveHorizontal, 1, transform.position.z + speed * moveVertical);
