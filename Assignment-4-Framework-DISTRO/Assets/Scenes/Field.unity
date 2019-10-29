@@ -252,6 +252,9 @@ MonoBehaviour:
   spawner3: {fileID: 438972478}
   SpawnText3: {fileID: 0}
   TreeCount: 0
+  Flock: []
+  velocity: {x: 0, y: 0, z: 0}
+  position: {x: 0, y: 0, z: 0}
   Path: []
   narrator: {fileID: 746086918}
 --- !u!4 &57836076
@@ -485,7 +488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60c36cfcd6da9ef4aa69fa473b1853e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.2
+  speed: 500
 --- !u!54 &160856708
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -102,18 +102,17 @@ public class SteeringBehavior : MonoBehaviour {
     public Vector3 Cohesion()
     {
         // Check for having arrived
-        if (flock.position[0] - agent.position[0] < 0.5 && flock.position[2] - agent.position[2] < 0.5)
+        if (flock.position[0] - agent.position[0] < 0.2 && flock.position[2] - agent.position[2] < 0.2)
         {
-            agent.velocity = new Vector3(0, 0, 0);
             return new Vector3(0, 0, 0);
         }
 
-        return (flock.position - agent.position) / timeToTarget;
+        return Vector3.Normalize(flock.position - agent.position);
     }
 
     public Vector3 VelocityMatch()
     {
-        return flock.velocity;
+        return Vector3.Normalize(flock.velocity);
     }
 
     // Face places

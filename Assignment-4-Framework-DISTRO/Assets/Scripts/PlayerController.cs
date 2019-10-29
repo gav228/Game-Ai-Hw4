@@ -42,11 +42,11 @@ public class PlayerController : MonoBehaviour {
              transform.rotation = Quaternion.LookRotation(movement);  
         }
         
-        this.transform.position = new Vector3(transform.position.x + speed * moveHorizontal, 1, transform.position.z + speed * moveVertical);
+        //this.transform.position = new Vector3(transform.position.x + speed * moveHorizontal, 1, transform.position.z + speed * moveVertical);
 
         // This is the physics based movement used in earlier assignments, not needed here.
-        // Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
-        // rb.AddForce(movement * speed);
+        //Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        rb.AddForce(movement * speed);
     }
 
 }

@@ -36,8 +36,9 @@ public class NPCController : MonoBehaviour {
         line = GetComponent<LineRenderer>();
         position = rb.position;
         orientation = transform.eulerAngles.y;
-        CohesionWeight = 50;
-        SeparationWeight = 0.5f;
+        CohesionWeight = 2f;
+        SeparationWeight = 2f;
+        VelocityWeight = 2f;
     }
 
     /// <summary>
@@ -56,7 +57,9 @@ public class NPCController : MonoBehaviour {
                     label.text = name.Replace("(Clone)","") + "\nAlgorithm: Flocking"; 
                 }
                 linear = ai.Cohesion() * CohesionWeight;   // For example
-                linear = ai.Separation() * SeparationWeight;
+                linear = linear + ai.Separation() * SeparationWeight;
+                linear = linear + ai.VelocityMatch() * VelocityWeight;
+               // linear = 
                 //angular = ai.Face_Where_Im_Going(linear);
 
                 // linear = ai.whatever();  -- replace with the desired calls

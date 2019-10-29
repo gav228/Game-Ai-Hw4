@@ -99,11 +99,12 @@ public class FieldMapManager : MonoBehaviour {
     /// </summary>
     private void Update()
     {
-        // Get average position
+        // Get average position - Weight it a bit more towards red
+        GameObject red = GameObject.Find("Red");
 
-        float sum_x = 0;
-        float sum_y = 0;
-        float sum_z = 0;
+        float sum_x = red.transform.position.x*20;
+        float sum_y = red.transform.position.y*20;
+        float sum_z = red.transform.position.z*20;
 
         // Sum values
         for (int i = 0; i < Flock.Count; i++)
@@ -114,18 +115,18 @@ public class FieldMapManager : MonoBehaviour {
         }
 
         // Divide
-        sum_x = sum_x / Flock.Count;
-        sum_y = sum_y / Flock.Count;
-        sum_z = sum_z / Flock.Count;
+        sum_x = sum_x / (Flock.Count+20);
+        sum_y = sum_y / (Flock.Count+20);
+        sum_z = sum_z / (Flock.Count+20);
 
         // Set average position
         position = new Vector3(sum_x, sum_y, sum_z);
 
-        // Get average velocity
+        // Get average velocity - Weight it more towards red
 
-        sum_x = 0;
-        sum_y = 0;
-        sum_z = 0;
+        sum_x = red.GetComponent<Rigidbody>().velocity.x*20;
+        sum_y = red.GetComponent<Rigidbody>().velocity.y*20;
+        sum_z = red.GetComponent<Rigidbody>().velocity.z*20;
 
         // Sum values
         for (int i = 0; i < Flock.Count; i++)
@@ -136,9 +137,9 @@ public class FieldMapManager : MonoBehaviour {
         }
 
         // Divide
-        sum_x = sum_x / Flock.Count;
-        sum_y = sum_y / Flock.Count;
-        sum_z = sum_z / Flock.Count;
+        sum_x = sum_x / (Flock.Count+20);
+        sum_y = sum_y / (Flock.Count+20);
+        sum_z = sum_z / (Flock.Count+20);
 
         // Set average position
         velocity = new Vector3(sum_x, sum_y, sum_z);
