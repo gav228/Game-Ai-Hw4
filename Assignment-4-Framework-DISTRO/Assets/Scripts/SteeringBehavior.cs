@@ -42,11 +42,15 @@ public class SteeringBehavior : MonoBehaviour {
     // Holds the path to follow
     public GameObject[] Path;
     public int current = 0;
+    public float avoidDistance;
+    public float lookAhead;
 
     protected void Start() {
         agent = GetComponent<NPCController>();
         wanderOrientation = agent.orientation;
         timeToTarget = 1;
+        lookAhead = 0.1f;
+        avoidDistance = 5f;
     }
 
     public float mapToRange(float rotation)
@@ -222,6 +226,34 @@ public class SteeringBehavior : MonoBehaviour {
         return direction;
     }
 
+    public Vector3 WallAvoidance(Vector3 linear, bool CP)
+    {
+
+        // Setup collision detection rayVector
+        Vector3 rayVector = agent.velocity;
+
+        //IGNORE SELF BY DOING THIS
+        int layerMask = 1 << 9;
+        layerMask = ~layerMask;
+
+        RaycastHit hit;
+        bool collision;
+        if (!CP)
+            collision = Physics.Raycast(agent.position, rayVector, out hit, lookAhead * 15, layerMask);
+        else
+            collision = Physics.Raycast(agent.position, rayVector, out hit, lookAhead * 100, layerMask);
+
+        if (collision)
+        {
+            Debug.Log(hit.transform.name);
+            Vector3 target_position = hit.point + hit.normal * avoidDistance;
+            return Vector3.Normalize(target_position - agent.position);
+        }
+
+
+        return linear;
+
+    }
     // ETC.
 
 }

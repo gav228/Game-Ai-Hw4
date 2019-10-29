@@ -29,6 +29,8 @@ public class NPCController : MonoBehaviour {
     public float CohesionWeight;
     public float SeparationWeight;
     public float VelocityWeight;
+    public float CollisionWeight;
+    public float PathWeight;
 
     private void Start() {
         ai = GetComponent<SteeringBehavior>();
@@ -36,9 +38,11 @@ public class NPCController : MonoBehaviour {
         line = GetComponent<LineRenderer>();
         position = rb.position;
         orientation = transform.eulerAngles.y;
-        CohesionWeight = 2.5f;
+        CohesionWeight = 3f;
         SeparationWeight = 1.5f;
         VelocityWeight = 1.5f;
+        CollisionWeight = 5f;
+        PathWeight = 1.5f;
     }
 
     /// <summary>
@@ -71,9 +75,10 @@ public class NPCController : MonoBehaviour {
                 }
 
                 linear = ai.Cohesion() * CohesionWeight;   // For example
-                linear = linear + ai.Separation() * SeparationWeight;
+                linear = linear + ai.Separation() * SeparationWeight ;
                 linear = linear + ai.VelocityMatch() * VelocityWeight;
-                linear = linear + ai.PathFollow();
+                linear = linear + ai.PathFollow() * PathWeight;
+                linear = linear + ai.WallAvoidance(linear, true) * CollisionWeight;
                 angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 3:
@@ -82,9 +87,10 @@ public class NPCController : MonoBehaviour {
                 }
 
                 linear = ai.Cohesion2() * CohesionWeight;   // For example
-                linear = linear + ai.Separation2() * SeparationWeight;
+                linear = linear + ai.Separation2() * SeparationWeight ;
                 linear = linear + ai.VelocityMatch2() * VelocityWeight;
-                linear = linear + ai.PathFollow();
+                linear = linear + ai.PathFollow() * PathWeight;
+                linear = linear + ai.WallAvoidance(linear, true) * CollisionWeight;
                 angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 4:
