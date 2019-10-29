@@ -43,8 +43,8 @@ public class FieldMapManager : MonoBehaviour {
  
     private List<GameObject> spawnedNPCs;   // When you need to iterate over a number of agents.
     private List<GameObject> trees;
-    private List<GameObject> Flock;
-    private Vector3 velocity;
+    public List<GameObject> Flock;
+    public Vector3 velocity;
     public Vector3 position;
 
     private int currentPhase = 0;           // This stores where in the "phases" the game is.
@@ -74,7 +74,8 @@ public class FieldMapManager : MonoBehaviour {
         spawnedNPCs = new List<GameObject>();
         for (int i = 0; i < 20; i++)
         {
-            GameObject hunter = SpawnItem(spawner1, HunterPrefab, null, SpawnText1, 4);
+            GameObject hunter = SpawnItem(spawner1, HunterPrefab, null, SpawnText1, 1);
+            hunter.GetComponent<SteeringBehavior>().flock = this;
             spawnedNPCs.Add(hunter);
             Flock.Add(hunter);
         }

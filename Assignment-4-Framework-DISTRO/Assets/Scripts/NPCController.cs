@@ -26,12 +26,18 @@ public class NPCController : MonoBehaviour {
     public Text label;              // Used to displaying text nearby the agent as it moves around
     LineRenderer line;              // Used to draw circles and other things
 
+    public float CohesionWeight;
+    public float SeparationWeight;
+    public float VelocityWeight;
+
     private void Start() {
         ai = GetComponent<SteeringBehavior>();
         rb = GetComponent<Rigidbody>();
         line = GetComponent<LineRenderer>();
         position = rb.position;
         orientation = transform.eulerAngles.y;
+        CohesionWeight = 50;
+        SeparationWeight = 0.5f;
     }
 
     /// <summary>
@@ -47,10 +53,11 @@ public class NPCController : MonoBehaviour {
                 if (label) {
                     // replace "First algorithm" with the name of the actual algorithm you're demoing
                     // do this for each phase
-                    label.text = name.Replace("(Clone)","") + "\nAlgorithm: First algorithm"; 
+                    label.text = name.Replace("(Clone)","") + "\nAlgorithm: Flocking"; 
                 }
-                linear = ai.Pursue();   // For example
-                angular = ai.Face();    // For example
+                linear = ai.Cohesion() * CohesionWeight;   // For example
+                linear = ai.Separation() * SeparationWeight;
+                //angular = ai.Face_Where_Im_Going(linear);
 
                 // linear = ai.whatever();  -- replace with the desired calls
                 // angular = ai.whatever();
@@ -151,7 +158,7 @@ public class NPCController : MonoBehaviour {
             x = Mathf.Sin(Mathf.Deg2Rad * angle) * radius;
             z = Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
 
-            line.SetPosition(i, new Vector3(x, 0, z)+position);
+            line.SetPosition(i, new Vector3(x, 1, z)+position);
             angle += (360f / 51);
         }
     }

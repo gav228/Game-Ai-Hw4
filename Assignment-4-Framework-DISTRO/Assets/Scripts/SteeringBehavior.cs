@@ -12,6 +12,7 @@ public class SteeringBehavior : MonoBehaviour {
     // The agent at hand here, and whatever target it is dealing with
     public NPCController agent;
     public NPCController target;
+    public FieldMapManager flock;
 
     // Below are a bunch of variable declarations that will be used for the next few
     // assignments. Only a few of them are needed for the first assignment.
@@ -45,6 +46,7 @@ public class SteeringBehavior : MonoBehaviour {
     protected void Start() {
         agent = GetComponent<NPCController>();
         wanderOrientation = agent.orientation;
+        timeToTarget = 1;
     }
 
     public float mapToRange(float rotation)
@@ -82,17 +84,36 @@ public class SteeringBehavior : MonoBehaviour {
 
     public Vector3 Separation()
     {
-        return new Vector3(0f, 0f, 0f);
+        Vector3 separationVector = new Vector3(0f, 0f, 0f);
+        for (int i = 0; i < flock.Flock.Count; i++)
+
+        {
+            int neighbors = 0;
+            if (Vector3.Distance(flock.Flock[i].transform.position, agent.transform.position) < 5)
+            {
+                separationVector += Vector3.Normalize((agent.position - flock.Flock[i].transform.position));
+                neighbors++;
+            }
+            //Debug.Log(neighbors);
+        }
+        return Vector3.Normalize(separationVector);
     }
 
     public Vector3 Cohesion()
     {
-        return new Vector3(0f, 0f, 0f);
+        // Check for having arrived
+        if (flock.position[0] - agent.position[0] < 0.5 && flock.position[2] - agent.position[2] < 0.5)
+        {
+            agent.velocity = new Vector3(0, 0, 0);
+            return new Vector3(0, 0, 0);
+        }
+
+        return (flock.position - agent.position) / timeToTarget;
     }
 
     public Vector3 VelocityMatch()
     {
-        return new Vector3(0f, 0f, 0f);
+        return flock.velocity;
     }
 
     // Face places
