@@ -48,6 +48,8 @@ public class FieldMapManager : MonoBehaviour {
     public List<GameObject> Flock2;
     public Vector3 velocity;
     public Vector3 position;
+    public Vector3 velocity2;
+    public Vector3 position2;
 
     private int currentPhase = 1;           // This stores where in the "phases" the game is.
     private int previousPhase = 1;          // The "phases" we were just in
@@ -79,12 +81,20 @@ public class FieldMapManager : MonoBehaviour {
     /// </summary>
     private void Update()
     {
-        // Get average position - Weight it a bit more towards red
+        // Get average position
         GameObject red = GameObject.Find("Red");
 
-        float sum_x = red.transform.position.x * 20;
-        float sum_y = red.transform.position.y * 20;
-        float sum_z = red.transform.position.z * 20;
+        float sum_x = 0;
+        float sum_y = 0;
+        float sum_z = 0;
+
+        // Weight it a bit more towards red if in part1
+        if (currentPhase == 1)
+        {
+            sum_x = red.transform.position.x * 20;
+            sum_y = red.transform.position.y * 20;
+            sum_z = red.transform.position.z * 20;
+        } 
 
         // Sum values
         for (int i = 0; i < Flock.Count; i++)
@@ -95,18 +105,56 @@ public class FieldMapManager : MonoBehaviour {
         }
 
         // Divide
-        sum_x = sum_x / (Flock.Count + 20);
-        sum_y = sum_y / (Flock.Count + 20);
-        sum_z = sum_z / (Flock.Count + 20);
+        if (currentPhase == 1)
+        {
+            sum_x = sum_x / (Flock.Count + 20);
+            sum_y = sum_y / (Flock.Count + 20);
+            sum_z = sum_z / (Flock.Count + 20);
+        } else
+        {
+            sum_x = sum_x / (Flock.Count);
+            sum_y = sum_y / (Flock.Count);
+            sum_z = sum_z / (Flock.Count);
+        }
 
-        // Set average position
+
+        // Set average position of flock 1
         position = new Vector3(sum_x, sum_y, sum_z);
 
-        // Get average velocity - Weight it more towards red
+        sum_x = 0;
+        sum_y = 0;
+        sum_z = 0;
 
-        sum_x = red.GetComponent<Rigidbody>().velocity.x * 20;
-        sum_y = red.GetComponent<Rigidbody>().velocity.y * 20;
-        sum_z = red.GetComponent<Rigidbody>().velocity.z * 20;
+        // Sum values
+        for (int i = 0; i < Flock2.Count; i++)
+        {
+            sum_x += Flock2[i].gameObject.transform.position.x;
+            sum_y += Flock2[i].gameObject.transform.position.y;
+            sum_z += Flock2[i].gameObject.transform.position.z;
+        }
+
+        // Divide
+      
+        sum_x = sum_x / (Flock2.Count);
+        sum_y = sum_y / (Flock2.Count);
+        sum_z = sum_z / (Flock2.Count);
+
+
+        // Set average position of flock 2
+        position2 = new Vector3(sum_x, sum_y, sum_z);
+
+
+        sum_x = 0;
+        sum_y = 0;
+        sum_z = 0;
+
+        // Get average velocity - Weight it more towards red
+        if (currentPhase == 1)
+        {
+            sum_x = red.GetComponent<Rigidbody>().velocity.x * 20;
+            sum_y = red.GetComponent<Rigidbody>().velocity.y * 20;
+            sum_z = red.GetComponent<Rigidbody>().velocity.z * 20;
+        }
 
         // Sum values
         for (int i = 0; i < Flock.Count; i++)
@@ -117,15 +165,45 @@ public class FieldMapManager : MonoBehaviour {
         }
 
         // Divide
-        sum_x = sum_x / (Flock.Count + 20);
-        sum_y = sum_y / (Flock.Count + 20);
-        sum_z = sum_z / (Flock.Count + 20);
+        if (currentPhase == 1)
+        {
+            sum_x = sum_x / (Flock.Count + 20);
+            sum_y = sum_y / (Flock.Count + 20);
+            sum_z = sum_z / (Flock.Count + 20);
+        }
+        else
+        {
+            sum_x = sum_x / (Flock.Count);
+            sum_y = sum_y / (Flock.Count);
+            sum_z = sum_z / (Flock.Count);
+        }
 
         // Set average position
         velocity = new Vector3(sum_x, sum_y, sum_z);
 
-        Debug.Log(position);
-        Debug.Log(velocity);
+        sum_x = 0;
+        sum_y = 0;
+        sum_z = 0;
+
+        // Sum values
+        for (int i = 0; i < Flock2.Count; i++)
+        {
+            sum_x += Flock2[i].gameObject.GetComponent<Rigidbody>().velocity.x;
+            sum_y += Flock2[i].gameObject.GetComponent<Rigidbody>().velocity.y;
+            sum_z += Flock2[i].gameObject.GetComponent<Rigidbody>().velocity.z;
+        }
+
+        // Divide
+        
+        sum_x = sum_x / (Flock2.Count);
+        sum_y = sum_y / (Flock2.Count);
+        sum_z = sum_z / (Flock2.Count);
+        
+
+        // Set average position
+        velocity2 = new Vector3(sum_x, sum_y, sum_z);
+
+
 
         if (Input.GetKeyDown("s") && started == false)
         {
@@ -203,6 +281,7 @@ public class FieldMapManager : MonoBehaviour {
 
 
         Flock = new List<GameObject>();
+        Flock2 = new List<GameObject>(); 
         trees = new List<GameObject>();
         SpawnTrees(TreeCount);
 
@@ -233,11 +312,12 @@ public class FieldMapManager : MonoBehaviour {
 
 
         Flock = new List<GameObject>();
+        Flock2 = new List<GameObject>();
         trees = new List<GameObject>();
         SpawnTrees(TreeCount);
 
         spawnedNPCs = new List<GameObject>();
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 7; i++)
         {
             GameObject hunter = SpawnItem(spawner4, HunterPrefab, null, SpawnText1, 2);
             hunter.GetComponent<SteeringBehavior>().flock = this;
@@ -245,17 +325,15 @@ public class FieldMapManager : MonoBehaviour {
             Flock.Add(hunter);
         }
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 7; i++)
         {
-            GameObject wolf = SpawnItem(spawner1, WolfPrefab, null, SpawnText1, 2);
+            GameObject wolf = SpawnItem(spawner1, WolfPrefab, null, SpawnText1, 3);
             wolf.GetComponent<SteeringBehavior>().flock = this;
             spawnedNPCs.Add(wolf);
             Flock2.Add(wolf);
         }
 
         CreatePath();
-        GameObject red = GameObject.Find("Red");
-        Flock.Add(red);
 
 
         started = false;
@@ -275,6 +353,7 @@ public class FieldMapManager : MonoBehaviour {
             }
             spawnedNPCs = new List<GameObject>();
             Flock = new List<GameObject>();
+            Flock2 = new List<GameObject>();
         }
     }
 

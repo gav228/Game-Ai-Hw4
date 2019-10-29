@@ -70,10 +70,10 @@ public class NPCController : MonoBehaviour {
                     label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Flocking with pathfinding";
                 }
 
-                //linear = ai.Cohesion() * CohesionWeight;   // For example
-                //linear = linear + ai.Separation() * SeparationWeight;
-                //linear = linear + ai.VelocityMatch() * VelocityWeight;
-                linear = ai.PathFollow();
+                linear = ai.Cohesion() * CohesionWeight;   // For example
+                linear = linear + ai.Separation() * SeparationWeight;
+                linear = linear + ai.VelocityMatch() * VelocityWeight;
+                linear = linear + ai.PathFollow();
                 angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 3:
@@ -81,8 +81,11 @@ public class NPCController : MonoBehaviour {
                     label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Third algorithm";
                 }
 
-                // linear = ai.whatever();  -- replace with the desired calls
-                // angular = ai.whatever();
+                linear = ai.Cohesion2() * CohesionWeight;   // For example
+                linear = linear + ai.Separation2() * SeparationWeight;
+                linear = linear + ai.VelocityMatch2() * VelocityWeight;
+                linear = linear + ai.PathFollow();
+                angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 4:
                 if (label) {

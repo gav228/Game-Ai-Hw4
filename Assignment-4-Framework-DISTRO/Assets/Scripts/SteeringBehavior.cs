@@ -99,6 +99,23 @@ public class SteeringBehavior : MonoBehaviour {
         return Vector3.Normalize(separationVector);
     }
 
+    public Vector3 Separation2()
+    {
+        Vector3 separationVector = new Vector3(0f, 0f, 0f);
+        for (int i = 0; i < flock.Flock2.Count; i++)
+
+        {
+            int neighbors = 0;
+            if (Vector3.Distance(flock.Flock2[i].transform.position, agent.transform.position) < 5)
+            {
+                separationVector += Vector3.Normalize((agent.position - flock.Flock2[i].transform.position));
+                neighbors++;
+            }
+            //Debug.Log(neighbors);
+        }
+        return Vector3.Normalize(separationVector);
+    }
+
     public Vector3 Cohesion()
     {
         // Check for having arrived
@@ -110,10 +127,27 @@ public class SteeringBehavior : MonoBehaviour {
         return Vector3.Normalize(flock.position - agent.position);
     }
 
+    public Vector3 Cohesion2()
+    {
+        // Check for having arrived
+        if (flock.position2[0] - agent.position[0] < 0.2 && flock.position2[2] - agent.position[2] < 0.2)
+        {
+            return new Vector3(0, 0, 0);
+        }
+
+        return Vector3.Normalize(flock.position2 - agent.position);
+    }
+
     public Vector3 VelocityMatch()
     {
         return Vector3.Normalize(flock.velocity);
     }
+
+    public Vector3 VelocityMatch2()
+    {
+        return Vector3.Normalize(flock.velocity2);
+    }
+
 
     // Face places
     public float Face_Where_Im_Going(Vector3 linear)
