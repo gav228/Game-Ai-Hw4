@@ -36,9 +36,9 @@ public class NPCController : MonoBehaviour {
         line = GetComponent<LineRenderer>();
         position = rb.position;
         orientation = transform.eulerAngles.y;
-        CohesionWeight = 2f;
-        SeparationWeight = 2f;
-        VelocityWeight = 2f;
+        CohesionWeight = 2.5f;
+        SeparationWeight = 1.5f;
+        VelocityWeight = 1.5f;
     }
 
     /// <summary>
@@ -67,11 +67,14 @@ public class NPCController : MonoBehaviour {
                 break;
             case 2:
                 if (label) {
-                    label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Second algorithm";
+                    label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Flocking with pathfinding";
                 }
 
-                // linear = ai.whatever();  -- replace with the desired calls
-                // angular = ai.whatever();
+                //linear = ai.Cohesion() * CohesionWeight;   // For example
+                //linear = linear + ai.Separation() * SeparationWeight;
+                //linear = linear + ai.VelocityMatch() * VelocityWeight;
+                linear = ai.PathFollow();
+                angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 3:
                 if (label) {

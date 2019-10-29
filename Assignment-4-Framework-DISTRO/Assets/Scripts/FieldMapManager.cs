@@ -38,17 +38,19 @@ public class FieldMapManager : MonoBehaviour {
     public Text SpawnText2;
     public GameObject spawner3;
     public Text SpawnText3;
+    public GameObject spawner4;
 
     public int TreeCount;
  
     private List<GameObject> spawnedNPCs;   // When you need to iterate over a number of agents.
     private List<GameObject> trees;
     public List<GameObject> Flock;
+    public List<GameObject> Flock2;
     public Vector3 velocity;
     public Vector3 position;
 
-    private int currentPhase = 0;           // This stores where in the "phases" the game is.
-    private int previousPhase = 0;          // The "phases" we were just in
+    private int currentPhase = 1;           // This stores where in the "phases" the game is.
+    private int previousPhase = 1;          // The "phases" we were just in
     private bool started;
     private GameObject red;
 
@@ -64,30 +66,8 @@ public class FieldMapManager : MonoBehaviour {
     // spawnedNPCs list. You can always add/remove NPCs later on.
 
     void Start() {
-        narrator.text = "This is part 1, press S to start, press S to restart";
-        
-        
-        Flock = new List<GameObject>();
-        trees = new List<GameObject>();
-        SpawnTrees(TreeCount);
-
-        spawnedNPCs = new List<GameObject>();
-        for (int i = 0; i < 20; i++)
-        {
-            GameObject hunter = SpawnItem(spawner1, HunterPrefab, null, SpawnText1, 1);
-            hunter.GetComponent<SteeringBehavior>().flock = this;
-            spawnedNPCs.Add(hunter);
-            Flock.Add(hunter);
-        }
-
-        GameObject red = GameObject.Find("Red");
-        Flock.Add(red);
-        
-
-        started = false;
-
-        Time.timeScale = 0;
-
+        EnterMapStateOne();
+     
         
         
     }
@@ -102,9 +82,9 @@ public class FieldMapManager : MonoBehaviour {
         // Get average position - Weight it a bit more towards red
         GameObject red = GameObject.Find("Red");
 
-        float sum_x = red.transform.position.x*20;
-        float sum_y = red.transform.position.y*20;
-        float sum_z = red.transform.position.z*20;
+        float sum_x = red.transform.position.x * 20;
+        float sum_y = red.transform.position.y * 20;
+        float sum_z = red.transform.position.z * 20;
 
         // Sum values
         for (int i = 0; i < Flock.Count; i++)
@@ -115,18 +95,18 @@ public class FieldMapManager : MonoBehaviour {
         }
 
         // Divide
-        sum_x = sum_x / (Flock.Count+20);
-        sum_y = sum_y / (Flock.Count+20);
-        sum_z = sum_z / (Flock.Count+20);
+        sum_x = sum_x / (Flock.Count + 20);
+        sum_y = sum_y / (Flock.Count + 20);
+        sum_z = sum_z / (Flock.Count + 20);
 
         // Set average position
         position = new Vector3(sum_x, sum_y, sum_z);
 
         // Get average velocity - Weight it more towards red
 
-        sum_x = red.GetComponent<Rigidbody>().velocity.x*20;
-        sum_y = red.GetComponent<Rigidbody>().velocity.y*20;
-        sum_z = red.GetComponent<Rigidbody>().velocity.z*20;
+        sum_x = red.GetComponent<Rigidbody>().velocity.x * 20;
+        sum_y = red.GetComponent<Rigidbody>().velocity.y * 20;
+        sum_z = red.GetComponent<Rigidbody>().velocity.z * 20;
 
         // Sum values
         for (int i = 0; i < Flock.Count; i++)
@@ -137,9 +117,9 @@ public class FieldMapManager : MonoBehaviour {
         }
 
         // Divide
-        sum_x = sum_x / (Flock.Count+20);
-        sum_y = sum_y / (Flock.Count+20);
-        sum_z = sum_z / (Flock.Count+20);
+        sum_x = sum_x / (Flock.Count + 20);
+        sum_y = sum_y / (Flock.Count + 20);
+        sum_z = sum_z / (Flock.Count + 20);
 
         // Set average position
         velocity = new Vector3(sum_x, sum_y, sum_z);
@@ -147,11 +127,13 @@ public class FieldMapManager : MonoBehaviour {
         Debug.Log(position);
         Debug.Log(velocity);
 
-        if (Input.GetKeyDown("s") && started == false){
+        if (Input.GetKeyDown("s") && started == false)
+        {
             started = true;
             Time.timeScale = 1;
-            
-        } else
+
+        }
+        else
         {
             if (Input.GetKeyDown("s") && started == true)
             {
@@ -166,7 +148,7 @@ public class FieldMapManager : MonoBehaviour {
         string inputstring = Input.inputString;
         if (inputstring.Length > 0)
         {
-            
+
 
             if (inputstring[0] == 'R')
             {
@@ -192,129 +174,108 @@ public class FieldMapManager : MonoBehaviour {
             return;
 
 
-        /************* FRAMEWORK VERSION
-       // If we get here, we've been given a new phase, from either source
-       switch (currentPhase) {
-           case 0:
-               EnterMapStateZero();
-               break;
 
-           case 1:
-               EnterMapStateOne();
-               break;
-
-           case 2:
-               EnterMapStateTwo();
-               break;
-
-           case 3:
-               break;
-       }
-       **************/
-
+        // If we get here, we've been given a new phase, from either source
         switch (currentPhase)
-            {
-                case 0:
-                    if (spawnedNPCs.Count > 1 && Vector3.Distance(spawnedNPCs[1].transform.position, spawnedNPCs[0].transform.position) < 12)
-                    {
-                        narrator.text = "The Hunter spots the wolf and believes it is his target. The Wolf runs.";
-                        spawnedNPCs[0].GetComponent<SteeringBehavior>().target = spawnedNPCs[1].GetComponent<NPCController>();
-                        spawnedNPCs[1].GetComponent<SteeringBehavior>().target = spawnedNPCs[0].GetComponent<NPCController>();
-                        spawnedNPCs[0].GetComponent<NPCController>().phase = 1;
-                        spawnedNPCs[1].GetComponent<NPCController>().phase = 2;
-                        currentPhase++;
-                    }
-                    break;
-                case 1:
-                    if (Vector3.Distance(spawnedNPCs[1].transform.position, spawnedNPCs[0].transform.position) < 2)
-                    {
-                        narrator.text = "Both the Hunter and Wolf move to another area. Little Red arrives and moves to her house.";
-                        spawnedNPCs[0].GetComponent<NPCController>().label.enabled = false;
-                        spawnedNPCs[0].GetComponent<NPCController>().DestroyPoints();
-                        spawnedNPCs[0].SetActive(false);
-                        spawnedNPCs[1].GetComponent<NPCController>().label.enabled = false;
-                        spawnedNPCs[1].GetComponent<NPCController>().DestroyPoints();
-                        spawnedNPCs[1].SetActive(false);
-                        spawnedNPCs.Add(SpawnItem(spawner3, RedPrefab, null, SpawnText3, 5));
-                        CreatePath();
-                        Invoke("SpawnWolf2", 10);
-                        currentPhase++;
-                    }
-                    break;
-                case 2:
-                    if (spawnedNPCs.Count > 3 && Vector3.Distance(spawnedNPCs[2].transform.position, spawnedNPCs[3].transform.position) < 12)
-                    {
-                        narrator.text = "Little Red notices the Wolf and moves toward it.";
-                        spawnedNPCs[2].GetComponent<SteeringBehavior>().target = spawnedNPCs[3].GetComponent<NPCController>();
-                        SetArrive(spawnedNPCs[2]);
-                        SetArrive(spawnedNPCs[3]);
-                        Invoke("Meeting2", 7);
-                        currentPhase++;
-                    }
-                    break;
-                case 3:
-                    if (Vector3.Distance(spawnedNPCs[2].transform.position, house.transform.position) < 12)
-                    {
-                        spawnedNPCs[2].GetComponent<SteeringBehavior>().target = house;
-                        SetArrive(spawnedNPCs[2]);
-                    }
-                    if (Vector3.Distance(spawnedNPCs[2].transform.position, house.transform.position) < 2)
-                    {
-                        spawnedNPCs[2].GetComponent<NPCController>().DestroyPoints();
-                        spawnedNPCs[2].GetComponent<NPCController>().label.enabled = false;
-                        spawnedNPCs[2].SetActive(false);
-                    }
-                    if (Vector3.Distance(spawnedNPCs[3].transform.position, house.transform.position) < 12)
-                    {
-                        SetArrive(spawnedNPCs[3]);
-                    }
-                    if (Vector3.Distance(spawnedNPCs[3].transform.position, house.transform.position) < 2)
-                    {
-                        spawnedNPCs[3].GetComponent<NPCController>().DestroyPoints();
-                        spawnedNPCs[3].GetComponent<NPCController>().label.enabled = false;
-                        spawnedNPCs[3].SetActive(false);
-                    }
-                    if (spawnedNPCs.Count > 4 && Vector3.Distance(spawnedNPCs[4].transform.position, house.transform.position) < 12)
-                    {
-                        SetArrive(spawnedNPCs[4]);
-                    }
-                    if (spawnedNPCs.Count > 4 && Vector3.Distance(spawnedNPCs[4].transform.position, house.transform.position) < 2)
-                    {
-                        spawnedNPCs[4].GetComponent<NPCController>().DestroyPoints();
-                        spawnedNPCs[4].GetComponent<NPCController>().label.enabled = false;
-                        spawnedNPCs[4].SetActive(false);
-                        Invoke("End", 5);
-                    }
-                    break;
-            }
+        {
+
+            case 1:
+                EnterMapStateOne();
+                break;
+
+            case 2:
+                EnterMapStateTwo();
+                break;
+
+        }
     }
+       
 
-    
 
-    private void EnterMapStateZero()
-    {
-        narrator.text = "In Phase Zero, we're going to ...";
-
-        //currentPhase = 2; // or whatever. Won't necessarily advance the phase every time
-
-        //spawnedNPCs.Add(SpawnItem(spawner2, WolfPrefab, null, SpawnText2, 4));
-    }
+  
 
     private void EnterMapStateOne() {
-        narrator.text = "In Phase One, we're going to ...";
 
-        //currentPhase = 2; // or whatever. Won't necessarily advance the phase every time
+        previousPhase = 1;
+        currentPhase = 1;
+        DestroyObjects();
+        narrator.text = "This is part 1, press S to start, press S to restart";
 
-        //spawnedNPCs.Add(SpawnItem(spawner2, WolfPrefab, null, SpawnText2, 4));
+
+        Flock = new List<GameObject>();
+        trees = new List<GameObject>();
+        SpawnTrees(TreeCount);
+
+        spawnedNPCs = new List<GameObject>();
+        for (int i = 0; i < 30; i++)
+        {
+            GameObject hunter = SpawnItem(spawner1, HunterPrefab, null, SpawnText1, 1);
+            hunter.GetComponent<SteeringBehavior>().flock = this;
+            spawnedNPCs.Add(hunter);
+            Flock.Add(hunter);
+        }
+
+        GameObject red = GameObject.Find("Red");
+        Flock.Add(red);
+
+
+        started = false;
+
+        Time.timeScale = 0;
     }
 
     private void EnterMapStateTwo()
     {
-        narrator.text = "Entering Phase Two";
+        previousPhase = 2;
+        currentPhase = 2;
+        DestroyObjects();
+        narrator.text = "This is part 2, press S to start, press S to restart";
 
-        currentPhase = 3; // or whatever. Won't necessarily advance the phase every time
 
-        //spawnedNPCs.Add(SpawnItem(spawner2, WolfPrefab, null, SpawnText2, 4));
+        Flock = new List<GameObject>();
+        trees = new List<GameObject>();
+        SpawnTrees(TreeCount);
+
+        spawnedNPCs = new List<GameObject>();
+        for (int i = 0; i < 6; i++)
+        {
+            GameObject hunter = SpawnItem(spawner4, HunterPrefab, null, SpawnText1, 2);
+            hunter.GetComponent<SteeringBehavior>().flock = this;
+            spawnedNPCs.Add(hunter);
+            Flock.Add(hunter);
+        }
+
+        for (int i = 0; i < 6; i++)
+        {
+            GameObject wolf = SpawnItem(spawner1, WolfPrefab, null, SpawnText1, 2);
+            wolf.GetComponent<SteeringBehavior>().flock = this;
+            spawnedNPCs.Add(wolf);
+            Flock2.Add(wolf);
+        }
+
+        CreatePath();
+        GameObject red = GameObject.Find("Red");
+        Flock.Add(red);
+
+
+        started = false;
+
+        Time.timeScale = 0;
+
+
+    }
+
+    private void DestroyObjects()
+    {
+        if (spawnedNPCs != null)
+        {
+            for (int i = 0; i < spawnedNPCs.Count; i++)
+            {
+                Destroy(spawnedNPCs[i]);
+            }
+            spawnedNPCs = new List<GameObject>();
+            Flock = new List<GameObject>();
+        }
     }
 
     private void EnterMapStateThree()

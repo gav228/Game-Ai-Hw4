@@ -132,6 +132,9 @@ MonoBehaviour:
   maxSpeed: 5
   phase: 0
   label: {fileID: 0}
+  CohesionWeight: 0
+  SeparationWeight: 0
+  VelocityWeight: 0
 --- !u!114 &114403713985068348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,6 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 114185916214848506}
   target: {fileID: 0}
+  flock: {fileID: 0}
   maxPrediction: 1
   maxAcceleration: 5
   maxSpeed: 5
@@ -159,7 +163,13 @@ MonoBehaviour:
   wanderOffset: 5
   wanderRadius: 2
   wanderRate: 1
-  Path: []
+  Path:
+  - {fileID: 374078352807330142, guid: e74a41588748bdb4faef0d039129c72b, type: 3}
+  - {fileID: 94876384210526268, guid: 36bd7a94bb844f74e80244998b6eb1b9, type: 3}
+  - {fileID: 7969645930664765388, guid: 8f2c665bbfe78ed4fbdce0449f15d0cf, type: 3}
+  - {fileID: 121359838164963089, guid: c591e20f76aea364bba585d18cf0d086, type: 3}
+  - {fileID: 6497048706806107897, guid: 9cf681a736d98cc47a7923bce267a26e, type: 3}
+  - {fileID: 3707844410719206489, guid: a7eba6292d677924ba0277b09ec31c04, type: 3}
   current: 0
 --- !u!120 &120447287367831728
 LineRenderer:

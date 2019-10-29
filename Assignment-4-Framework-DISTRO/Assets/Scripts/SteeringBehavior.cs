@@ -159,6 +159,35 @@ public class SteeringBehavior : MonoBehaviour {
         return angular;
     }
 
+    // Calculate the Path to follow
+    public Vector3 PathFollow()
+    {
+        // Setup direction variable
+        Vector3 direction = new Vector3(0, 0, 0);
+
+        if (current >= Path.Length)
+        {
+            return direction;
+        }
+
+        // Look for next path location
+        if ((Path[current].transform.position - agent.position).magnitude > targetRadiusL)
+        {
+            // Get the direction to the target
+            direction = Path[current].transform.position - agent.position;
+
+            // Give full acceleration along this direction
+            direction.Normalize();
+            direction *= maxAcceleration;
+        }
+        else
+        {
+            //increment path location
+            current++;
+        }
+        return direction;
+    }
+
     // ETC.
 
 }
