@@ -60,7 +60,7 @@ public class NPCController : MonoBehaviour {
                 linear = linear + ai.Separation() * SeparationWeight;
                 linear = linear + ai.VelocityMatch() * VelocityWeight;
                // linear = 
-                //angular = ai.Face_Where_Im_Going(linear);
+                angular = ai.Face_Where_Im_Going(linear);
 
                 // linear = ai.whatever();  -- replace with the desired calls
                 // angular = ai.whatever();
