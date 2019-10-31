@@ -115,8 +115,12 @@ public class NPCController : MonoBehaviour {
                     label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Fifth algorithm";
                 }
 
-                // linear = ai.whatever();  -- replace with the desired calls
-                // angular = ai.whatever();
+                linear = ai.Cohesion2() * CohesionWeight;
+                linear = linear + ai.Separation2() * SeparationWeight;
+                linear = linear + ai.VelocityMatch2() * VelocityWeight;
+                linear = linear + ai.PathFollow() * PathWeight;
+                linear = linear + ai.CollisionPrediction2() * CollisionWeight;
+                angular = ai.Face_Where_Im_Going(linear);
                 break;
         }
         update(linear, angular, Time.deltaTime);

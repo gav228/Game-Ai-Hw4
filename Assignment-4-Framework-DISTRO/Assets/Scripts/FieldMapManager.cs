@@ -232,6 +232,10 @@ public class FieldMapManager : MonoBehaviour {
             {
                 Flock[i].GetComponent<NPCController>().phase = 2;
             }
+            for (int i = 0; i < Flock2.Count; i++)
+            {
+                Flock2[i].GetComponent<NPCController>().phase = 3;
+            }
 
         }
         if (Input.GetKeyDown("p") && currentPhase == 2)
@@ -240,6 +244,10 @@ public class FieldMapManager : MonoBehaviour {
             for (int i = 0; i < Flock.Count; i++)
             {
                 Flock[i].GetComponent<NPCController>().phase = 4;
+            }
+            for (int i = 0; i < Flock2.Count; i++)
+            {
+                Flock2[i].GetComponent<NPCController>().phase = 5;
             }
 
         }

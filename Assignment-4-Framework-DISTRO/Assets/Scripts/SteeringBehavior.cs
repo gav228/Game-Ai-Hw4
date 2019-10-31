@@ -275,18 +275,21 @@ public class SteeringBehavior : MonoBehaviour {
         // 1. Find the target that's closest to collision
 
         // store the first collision time
-        int shortestTime = int.MaxValue;
+        float shortestTime = float.MaxValue;
 
         // Store the target that collides then, and other data
         // that we will need and can avoid recalculating
-        GameObject firstTarget;
-        float firstMinSeparation;
-        float firstDistance;
-        Vector3 firstRelativePos;
-        Vector3 firstRelativeVel;
+        GameObject firstTarget = null;
+        float firstMinSeparation = 0;
+        float firstDistance = 0;
+        Vector3 firstRelativePos = Vector3.zero;
+        Vector3 firstRelativeVel = Vector3.zero;
+        Vector3 relativePos = Vector3.zero;
+        Vector3 relativeVel = Vector3.zero;
+        float distance = 0;
 
         // First check all around me
-        Collider[] hitColliders = Physics.OverlapSphere(agent.position, 8);
+        Collider[] hitColliders = Physics.OverlapSphere(agent.position, 3);
 
         // Loop through each target
         int i = 0;
@@ -296,16 +299,139 @@ public class SteeringBehavior : MonoBehaviour {
             if (flock.Flock2.Contains(hitColliders[i].gameObject))
             {
                 // Calculate time to collision
-                Vector3 relativePos = hitColliders[i].gameObject.transform.position - agent.position;
-                Vector3 relativeVel = hitColliders[i].gameObject.gameObject.GetComponent<Rigidbody>().velocity - agent.velocity;
+                relativePos = hitColliders[i].gameObject.transform.position - agent.position;
+                relativeVel = hitColliders[i].gameObject.gameObject.GetComponent<Rigidbody>().velocity - agent.velocity;
                 float relativeSpeed = relativeVel.magnitude;
-                
+                float timeToCollision = Vector3.Dot(relativePos, relativeVel) / (relativeSpeed * relativeSpeed);
+
+                // Check if its going to be a collision at all
+                distance = relativePos.magnitude;
+                float minSeparation = distance - relativeSpeed * shortestTime;
+                if (minSeparation > (2 * 5))
+                {
+                    continue;
+                }
+                if (timeToCollision > 0 && timeToCollision < shortestTime)
+                {
+                    shortestTime = timeToCollision;
+                    firstTarget = hitColliders[i].gameObject;
+                    firstMinSeparation = minSeparation;
+                    firstDistance = distance;
+                    firstRelativePos = relativePos;
+                    firstRelativeVel = relativeVel;
+                }
+
             }
             i++;
         }
 
+        // 2. Calculate the steering
 
-        return new Vector3(0, 0, 0);
+        // if we have no first target return no steering
+        if (firstTarget == null)
+        {
+            return new Vector3(0, 0, 0);
+        }
+
+        // If we’re going to hit exactly, or if we’re already
+        // colliding, then do the steering based on current
+        // position.
+        if (firstMinSeparation <= 0 || distance < 2 * 3){
+            relativePos = agent.position - firstTarget.transform.position ;
+            
+        }
+        else //Otherwise calculate the future relative position
+        {
+            relativePos = firstRelativePos + firstRelativeVel * shortestTime;
+        }
+        
+        return Vector3.Normalize(relativePos);
+
+
+
+    }
+
+    public Vector3 CollisionPrediction2() // Based off the textbook
+    {
+
+        // 1. Find the target that's closest to collision
+
+        // store the first collision time
+        float shortestTime = float.MaxValue;
+
+        // Store the target that collides then, and other data
+        // that we will need and can avoid recalculating
+        GameObject firstTarget = null;
+        float firstMinSeparation = 0;
+        float firstDistance = 0;
+        Vector3 firstRelativePos = Vector3.zero;
+        Vector3 firstRelativeVel = Vector3.zero;
+        Vector3 relativePos = Vector3.zero;
+        Vector3 relativeVel = Vector3.zero;
+        float distance = 0;
+
+        // First check all around me
+        Collider[] hitColliders = Physics.OverlapSphere(agent.position, 3);
+
+        // Loop through each target
+        int i = 0;
+        while (i < hitColliders.Length)
+        {
+            // Check them only if valid obstacle (oposing flock)
+            if (flock.Flock.Contains(hitColliders[i].gameObject))
+            {
+                // Calculate time to collision
+                relativePos = hitColliders[i].gameObject.transform.position - agent.position;
+                relativeVel = hitColliders[i].gameObject.gameObject.GetComponent<Rigidbody>().velocity - agent.velocity;
+                float relativeSpeed = relativeVel.magnitude;
+                float timeToCollision = Vector3.Dot(relativePos, relativeVel) / (relativeSpeed * relativeSpeed);
+
+                // Check if its going to be a collision at all
+                distance = relativePos.magnitude;
+                float minSeparation = distance - relativeSpeed * shortestTime;
+                if (minSeparation > (2 * 5))
+                {
+                    continue;
+                }
+                if (timeToCollision > 0 && timeToCollision < shortestTime)
+                {
+                    shortestTime = timeToCollision;
+                    firstTarget = hitColliders[i].gameObject;
+                    firstMinSeparation = minSeparation;
+                    firstDistance = distance;
+                    firstRelativePos = relativePos;
+                    firstRelativeVel = relativeVel;
+                }
+
+            }
+            i++;
+        }
+
+        // 2. Calculate the steering
+
+        // if we have no first target return no steering
+        if (firstTarget == null)
+        {
+            return new Vector3(0, 0, 0);
+        }
+
+        // If we’re going to hit exactly, or if we’re already
+        // colliding, then do the steering based on current
+        // position.
+        if (firstMinSeparation <= 0 || distance < 2 * 3)
+        {
+            relativePos = agent.position - firstTarget.transform.position;
+
+        }
+        else //Otherwise calculate the future relative position
+        {
+            relativePos = firstRelativePos + firstRelativeVel * shortestTime;
+        }
+
+        return Vector3.Normalize(relativePos);
+
+
+
     }
     // ETC.
 
