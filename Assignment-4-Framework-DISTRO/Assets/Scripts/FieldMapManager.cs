@@ -51,8 +51,8 @@ public class FieldMapManager : MonoBehaviour {
     public Vector3 velocity2;
     public Vector3 position2;
 
-    private int currentPhase = 1;           // This stores where in the "phases" the game is.
-    private int previousPhase = 1;          // The "phases" we were just in
+    private int currentPhase = 0;           // This stores where in the "phases" the game is.
+    private int previousPhase = 0;          // The "phases" we were just in
     private bool started;
     private GameObject red;
 
@@ -69,8 +69,6 @@ public class FieldMapManager : MonoBehaviour {
 
     void Start() {
         EnterMapStateOne();
-     
-        
         
     }
 
@@ -264,7 +262,9 @@ public class FieldMapManager : MonoBehaviour {
             case 2:
                 EnterMapStateTwo();
                 break;
-
+            case 3:
+                SceneManager.LoadScene("Forest");
+                break;
         }
     }
        

@@ -226,33 +226,47 @@ public class SteeringBehavior : MonoBehaviour {
         return direction;
     }
 
-    public Vector3 WallAvoidance(Vector3 linear, bool CP)
+    public Vector3 ConeCheck()
     {
-
-        // Setup collision detection rayVector
-        Vector3 rayVector = agent.velocity;
-
-        //IGNORE SELF BY DOING THIS
-        int layerMask = 1 << 9;
-        layerMask = ~layerMask;
-
-        RaycastHit hit;
-        bool collision;
-        if (!CP)
-            collision = Physics.Raycast(agent.position, rayVector, out hit, lookAhead * 15, layerMask);
-        else
-            collision = Physics.Raycast(agent.position, rayVector, out hit, lookAhead * 100, layerMask);
-
-        if (collision)
+        // First check all around me
+        Collider[] hitColliders = Physics.OverlapSphere(agent.position, 8);
+        
+        int i = 0;
+        while (i < hitColliders.Length)
         {
-            Debug.Log(hit.transform.name);
-            Vector3 target_position = hit.point + hit.normal * avoidDistance;
-            return Vector3.Normalize(target_position - agent.position);
+            if (flock.Flock2.Contains(hitColliders[i].gameObject)) { 
+                float angle = Vector3.Angle(agent.transform.forward, hitColliders[i].transform.position - transform.position);
+
+                if (angle < 20.0f)
+                {
+                    return Vector3.Normalize(agent.position - hitColliders[i].transform.position);
+                }
+            }
+            i++;
         }
+        return new Vector3(0, 0, 0);
+    }
 
+    public Vector3 ConeCheck2()
+    {
+        // First check all around me
+        Collider[] hitColliders = Physics.OverlapSphere(agent.position, 8);
+        
+        int i = 0;
+        while (i < hitColliders.Length)
+        {
+            if (flock.Flock.Contains(hitColliders[i].gameObject))
+            {
+                float angle = Vector3.Angle(agent.transform.forward, hitColliders[i].transform.position - transform.position);
 
-        return linear;
-
+                if (angle < 20.0f)
+                {
+                    return Vector3.Normalize(agent.position - hitColliders[i].transform.position);
+                }
+            }
+            i++;
+        }
+        return new Vector3(0, 0, 0);
     }
     // ETC.
 

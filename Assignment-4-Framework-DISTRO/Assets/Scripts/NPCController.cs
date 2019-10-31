@@ -31,6 +31,7 @@ public class NPCController : MonoBehaviour {
     public float VelocityWeight;
     public float CollisionWeight;
     public float PathWeight;
+    public int flock;
 
     private void Start() {
         ai = GetComponent<SteeringBehavior>();
@@ -41,7 +42,7 @@ public class NPCController : MonoBehaviour {
         CohesionWeight = 3f;
         SeparationWeight = 1.5f;
         VelocityWeight = 1.5f;
-        CollisionWeight = 5f;
+        CollisionWeight = 15f;
         PathWeight = 1.5f;
     }
 
@@ -70,27 +71,29 @@ public class NPCController : MonoBehaviour {
                 // angular = ai.whatever();
                 break;
             case 2:
+                // used for pathfinding and cone check for flock 1
                 if (label) {
-                    label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Flocking with pathfinding";
+                    label.text = name.Replace("(Clone)", "") + "\nAlgorithm: pathfinding";
                 }
 
                 linear = ai.Cohesion() * CohesionWeight;   // For example
                 linear = linear + ai.Separation() * SeparationWeight ;
                 linear = linear + ai.VelocityMatch() * VelocityWeight;
                 linear = linear + ai.PathFollow() * PathWeight;
-                linear = linear + ai.WallAvoidance(linear, true) * CollisionWeight;
+                linear = linear + ai.ConeCheck() * CollisionWeight;
                 angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 3:
+                // used for pathfinding and cone check for flock 2
                 if (label) {
                     label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Third algorithm";
                 }
 
-                linear = ai.Cohesion2() * CohesionWeight;   // For example
+                linear = ai.Cohesion2() * CohesionWeight;   
                 linear = linear + ai.Separation2() * SeparationWeight ;
                 linear = linear + ai.VelocityMatch2() * VelocityWeight;
                 linear = linear + ai.PathFollow() * PathWeight;
-                linear = linear + ai.WallAvoidance(linear, true) * CollisionWeight;
+                linear = linear + ai.ConeCheck2() * CollisionWeight;
                 angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 4:
