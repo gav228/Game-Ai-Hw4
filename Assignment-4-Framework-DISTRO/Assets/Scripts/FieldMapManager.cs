@@ -218,6 +218,18 @@ public class FieldMapManager : MonoBehaviour {
             }
         }
 
+        if (Input.GetKeyDown("c") && currentPhase == 2)
+        {
+            narrator.text = "Cone Check";
+
+        }
+        if (Input.GetKeyDown("p") && currentPhase == 2)
+        {
+            narrator.text = "Collision Prediction";
+
+        }
+
+
 
         int num;
 

@@ -268,6 +268,11 @@ public class SteeringBehavior : MonoBehaviour {
         }
         return new Vector3(0, 0, 0);
     }
+
+    public Vector3 CollisionPredition()
+    {
+        return new Vector3(0, 0, 0);
+    }
     // ETC.
 
 }
