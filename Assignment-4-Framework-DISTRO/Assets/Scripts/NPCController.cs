@@ -56,9 +56,9 @@ public class NPCController : MonoBehaviour {
                 //angular = ai.Face_Where_Im_Going(position);
                 break;
             case 1:
+                // regular flocking behavior
                 if (label) {
-                    // replace "First algorithm" with the name of the actual algorithm you're demoing
-                    // do this for each phase
+                    
                     label.text = name.Replace("(Clone)","") + "\nAlgorithm: Flocking"; 
                 }
                 linear = ai.Cohesion() * CohesionWeight;   // For example
@@ -73,7 +73,7 @@ public class NPCController : MonoBehaviour {
             case 2:
                 // used for pathfinding and cone check for flock 1
                 if (label) {
-                    label.text = name.Replace("(Clone)", "") + "\nAlgorithm: pathfinding";
+                    label.text = name.Replace("(Clone)", "") + "\nAlgorithm: cone check flock 1";
                 }
 
                 linear = ai.Cohesion() * CohesionWeight;   // For example
@@ -86,7 +86,7 @@ public class NPCController : MonoBehaviour {
             case 3:
                 // used for pathfinding and cone check for flock 2
                 if (label) {
-                    label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Third algorithm";
+                    label.text = name.Replace("(Clone)", "") + "\nAlgorithm: cone check flock 2";
                 }
 
                 linear = ai.Cohesion2() * CohesionWeight;   
@@ -97,14 +97,20 @@ public class NPCController : MonoBehaviour {
                 angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 4:
+                // used for pathfinding and collision prediction for flock 1
                 if (label) {
                     label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Fourth algorithm";
                 }
 
-                // linear = ai.whatever();  -- replace with the desired calls
-                // angular = ai.whatever();
+                linear = ai.Cohesion() * CohesionWeight;   // For example
+                linear = linear + ai.Separation() * SeparationWeight;
+                linear = linear + ai.VelocityMatch() * VelocityWeight;
+                linear = linear + ai.PathFollow() * PathWeight;
+                linear = linear + ai.CollisionPrediction() * CollisionWeight;
+                angular = ai.Face_Where_Im_Going(linear);
                 break;
             case 5:
+                // used for pathfinding and collision prediction for flock 2
                 if (label) {
                     label.text = name.Replace("(Clone)", "") + "\nAlgorithm: Fifth algorithm";
                 }

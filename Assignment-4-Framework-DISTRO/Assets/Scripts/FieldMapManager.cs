@@ -228,10 +228,19 @@ public class FieldMapManager : MonoBehaviour {
         {
             narrator.text = "Cone Check";
 
+            for (int i =0; i < Flock.Count; i++)
+            {
+                Flock[i].GetComponent<NPCController>().phase = 2;
+            }
+
         }
         if (Input.GetKeyDown("p") && currentPhase == 2)
         {
             narrator.text = "Collision Prediction";
+            for (int i = 0; i < Flock.Count; i++)
+            {
+                Flock[i].GetComponent<NPCController>().phase = 4;
+            }
 
         }
 

@@ -269,8 +269,42 @@ public class SteeringBehavior : MonoBehaviour {
         return new Vector3(0, 0, 0);
     }
 
-    public Vector3 CollisionPredition()
+    public Vector3 CollisionPrediction() // Based off the textbook
     {
+
+        // 1. Find the target that's closest to collision
+
+        // store the first collision time
+        int shortestTime = int.MaxValue;
+
+        // Store the target that collides then, and other data
+        // that we will need and can avoid recalculating
+        GameObject firstTarget;
+        float firstMinSeparation;
+        float firstDistance;
+        Vector3 firstRelativePos;
+        Vector3 firstRelativeVel;
+
+        // First check all around me
+        Collider[] hitColliders = Physics.OverlapSphere(agent.position, 8);
+
+        // Loop through each target
+        int i = 0;
+        while (i < hitColliders.Length)
+        {
+            // Check them only if valid obstacle (oposing flock)
+            if (flock.Flock2.Contains(hitColliders[i].gameObject))
+            {
+                // Calculate time to collision
+                Vector3 relativePos = hitColliders[i].gameObject.transform.position - agent.position;
+                Vector3 relativeVel = hitColliders[i].gameObject.gameObject.GetComponent<Rigidbody>().velocity - agent.velocity;
+                float relativeSpeed = relativeVel.magnitude;
+                
+            }
+            i++;
+        }
+
+
         return new Vector3(0, 0, 0);
     }
     // ETC.
