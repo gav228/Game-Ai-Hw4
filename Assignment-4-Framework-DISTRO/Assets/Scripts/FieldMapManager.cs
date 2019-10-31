@@ -214,7 +214,13 @@ public class FieldMapManager : MonoBehaviour {
             if (Input.GetKeyDown("s") && started == true)
             {
                 // Add restart logic
-                SceneManager.LoadScene("Field");
+                if (currentPhase == 1)
+                {
+                    SceneManager.LoadScene("Field");
+                } else
+                {
+                    EnterMapStateTwo();
+                }
             }
         }
 
